@@ -49,4 +49,4 @@ COPY riak-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/riak-entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/riak-entrypoint.sh"]
-CMD ["riak", "console"]
+CMD ["foreground"]
