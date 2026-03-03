@@ -1,0 +1,1889 @@
+apiVersion: v1 
+kind: ConfigMap
+metadata:
+  name: riak-conf
+  namespace: bangfs
+data:
+  # listener bind addresses set
+  # strong_consistency settinig set
+  conf-file: |
+    ## The severity level of the console log, default is 'info'.
+    ## 
+    ## Default: info
+    ## 
+    ## Acceptable values:
+    ##   - one of: debug, info, notice, warning, error, critical, alert, emergency, none
+    logger.level = info
+
+    ## Format string for the messages emitted to default log. The string is passed into
+    ## the handler as a logger_formatter template, the format is a list containing strings
+    ## and atoms. The atoms denote the keys for retrieving metadata from the logger events.
+    ## More information on default metadata can be found here (https://www.erlang.org/doc/man/logger_formatter.html#type-template).
+    ## 
+    ## Default: [time," [",level,"] ",pid,"@",mfa,":",line," ",msg,"\n"].
+    ## 
+    ## Acceptable values:
+    ##   - text
+    logger.format = [time," [",level,"] ",pid,"@",mfa,":",line," ",msg,"\n"].
+
+    ## Filename to use for log files.
+    ## 
+    ## Default: $(platform_log_dir)/console.log
+    ## 
+    ## Acceptable values:
+    ##   - the path to a file
+    logger.file = $(platform_log_dir)/console.log
+
+    ## With log rotation enabled, this decides the maximum number of log
+    ## files to store.
+    ## 
+    ## Default: 10
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    logger.max_files = 10
+
+    ## The maximum size of a single log file. Total size used for log files will
+    ## be max_file_size * max_files.
+    ## 
+    ## Default: 1MB
+    ## 
+    ## Acceptable values:
+    ##   - a byte size with units, e.g. 10GB
+    logger.max_file_size = 1MB
+
+    ## 
+    ## Default: true
+    ## 
+    ## Acceptable values:
+    ##   - text
+    erlang.vm.ignore_break_signal = true
+
+    ## The VM single block carrier threshold (KB) for process heap
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.eheap_memory.sbct = 512
+
+    ## The VM single block carrier threshold (KB) for binary heap
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.binary_memory.sbct = 512
+
+    ## The VM multi block carrier large size for process heap
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.eheap_memory.lmbcs = 5120
+
+    ## The VM multi block carrier large size for binary heap
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.binary_memory.lmbcs = 5120
+
+    ## The VM multi block carrier small size for process heap
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.eheap_memory.smbcs = 256
+
+    ## The VM multi block carrier small size for binary heap
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.binary_memory.smbcs = 256
+
+    ## Set allocation strategy for binary multiblock carriers.  Default is
+    ## not predictable - do not rely on aoffcbf being the default.  For more info
+    ## see:
+    ## https://github.com/erlang/otp/blob/master/erts/emulator/internal_doc/CarrierMigration.md
+    ## 
+    ## Acceptable values:
+    ##   - one of: bf, aobf, aoff, aoffcbf, aoffcaobf, ageffcaoff, ageffcbf, ageffcaobf, gf
+    ## erlang.binary_memory.as = aoffcbf
+
+    ## Set allocation strategy for process multiblock carriers.  Default is
+    ## not predictable - do not rely on aoffcbf being the default.  For more info
+    ## see:
+    ## https://github.com/erlang/otp/blob/master/erts/emulator/internal_doc/CarrierMigration.md
+    ## 
+    ## Acceptable values:
+    ##   - one of: bf, aobf, aoff, aoffcbf, aoffcaobf, ageffcaoff, ageffcbf, ageffcaobf, gf
+    ## erlang.eheap_memory.as = aoffcbf
+
+    ## Set scheduler binding.  This is either unbound (default - u) or can be
+    ## set to whatever the default binding condition is, in the deployed release of
+    ## OTP (db).
+    ## For more info see: https://www.erlang.org/doc/man/erl.html#+sbt
+    ## Note that if non-Riak work is activated on the same node - e.g. as part
+    ## of batch operational jobs, or monitoring - allowing schedulers to be bound
+    ## can result in significant and unpredictable negative outcomes.  There may be
+    ## other ways of achieving similar performance improvements - e.g. by
+    ## right-sizing scheduler counts - that are lower risk than scheduler binding.
+    ## If a CPU topology cannot be determined, the binding will default to unbound
+    ## even when a binding is configured.  To confirm binding, use `remote_console`
+    ## and view:
+    ## `erlang:system_info(scheduler_bindings).`
+    ## 
+    ## Acceptable values:
+    ##   - one of: u, db
+    ## erlang.schedulers_binding = u
+
+    ## Busy wait of schedulers
+    ## Sets scheduler busy wait threshold. Defaults to medium. The threshold
+    ## determines how long schedulers are to busy wait when running out of work
+    ## before going to sleep.
+    ## Significant improvements in efficiency may be gained by disabling busy
+    ## waiting
+    ## 
+    ## Acceptable values:
+    ##   - one of: none, very_short, short, medium, long, very_long
+    ## erlang.schedulers_busywait = none
+
+    ## Busy wait of dirty cpu schedulers
+    ## Sets scheduler busy wait threshold. Defaults to short. The threshold
+    ## determines how long schedulers are to busy wait when running out of work
+    ## before going to sleep.
+    ## Significant improvements in efficiency may be gained by disabling busy
+    ## waiting
+    ## 
+    ## Acceptable values:
+    ##   - one of: none, very_short, short, medium, long, very_long
+    ## erlang.schedulers_busywait_dirtycpu = none
+
+    ## Busy wait of dirty io schedulers
+    ## Sets scheduler busy wait threshold. Defaults to short. The threshold
+    ## determines how long schedulers are to busy wait when running out of work
+    ## before going to sleep.
+    ## Significant improvements in efficiency may be gained by disabling busy
+    ## waiting
+    ## 
+    ## Acceptable values:
+    ##   - one of: none, very_short, short, medium, long, very_long
+    ## erlang.schedulers_busywait_dirtyio = none
+
+    ## Set the Percentage of Schedulers to be online
+    ## For every vCPU in the system, what percentage should have a scheduler, and
+    ## what percentage of those schedulers should be online by default.
+    ## Do not set unless guided by perfomance tests for the specific setup and
+    ## workload.
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## erlang.schedulers_online_percentage = 100:75
+
+    ## Set the Percentage of Dirty CPU Schedulers to be online
+    ## When using the leveled backend a relatievly low number of dirty schedulers
+    ## (e.g. 25%) are likely to be required due to the low proportion of NIFs in
+    ## use.
+    ## The percentages cannot exceed those of the schedulers_online_percentage
+    ## which will default to 100% of CPU.
+    ## Do not set unless guided by perfomance tests for the specific setup and
+    ## workload.
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## erlang.schedulers_dirtycpu_online_percentage = 50:25
+
+    ## Set the absolute limit of Dirty IO Schedulers to be online
+    ## When using the leveled backend a relatievly high number of dirty schedulers
+    ## may be required relative to the CPU count, depending on the concurrent disk
+    ## throughput possible.
+    ## Unlike the scheduler percentages, this is set as an abolute number between
+    ## 1 and 1024 (default is 10).
+    ## Do not set unless guided by perfomance tests for the specific setup and
+    ## workload.
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.schedulers_dirtyio_online = 10
+
+    ## Name of the Erlang node
+    ## 
+    ## Default: riak@127.0.0.1
+    ## 
+    ## Acceptable values:
+    ##   - text
+    nodename = riak@127.0.0.1
+
+    ## Cookie for distributed node communication.  All nodes in the
+    ## same cluster should use the same cookie or they will not be able to
+    ## communicate.
+    ## 
+    ## Default: riak
+    ## 
+    ## Acceptable values:
+    ##   - text
+    distributed_cookie = riak
+
+    ## Sets the number of threads in async thread pool, valid range
+    ## is 0-1024. If thread support is available, the default is 64.
+    ## More information at: http://erlang.org/doc/man/erl.html
+    ## Large async_thread pools are likely now unnecessary if exclusively using
+    ## the leveled backend due to dirty NIFs, and so can be set to a much smaller
+    ## value (potentially 1).
+    ## 
+    ## Default: 64
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    erlang.async_threads = 64
+
+    ## The number of concurrent ports/sockets
+    ## Valid range is 1024-134217727
+    ## 
+    ## Default: 262144
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    erlang.max_ports = 262144
+
+    ## Riak changes the VM default wakeup interval in order to reduce the
+    ## risk of scheduler collapse, prior to the availability of Dirty NIFs in
+    ## later OTP versions. When using the leveled backend exclusively (either for
+    ## AAE or object storage) this change is likely unnecessary, and the VM default
+    ## of 0 can be used.
+    ## 
+    ## Default: 500
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## erlang.schedulers.force_wakeup_interval = 500
+
+    ## Riak changes the compaction_of_load default from true to false. This
+    ## is part of the strategy for preventing scheduler collapse in older VMs.
+    ## When using the leveled backend exclusively (either for AAE or object
+    ## storage), this change from the standard BEAM defaults is likely unnecessary
+    ## - and compaction_of_load can be re-enabled.
+    ## 
+    ## Default: false
+    ## 
+    ## Acceptable values:
+    ##   - one of: true, false
+    ## erlang.schedulers.compaction_of_load = false
+
+    ## Enable or disable scheduler utilization balancing of load. By
+    ## default scheduler utilization balancing is disabled and instead
+    ## scheduler compaction of load is enabled which will strive for a
+    ## load distribution which causes as many scheduler threads as
+    ## possible to be fully loaded (i.e., not run out of work). When
+    ## scheduler utilization balancing is enabled the system will instead
+    ## try to balance scheduler utilization between schedulers. That is,
+    ## strive for equal scheduler utilization on all schedulers.
+    ## More information: http://www.erlang.org/doc/man/erl.html#+sub
+    ## 
+    ## Acceptable values:
+    ##   - one of: true, false
+    ## erlang.schedulers.utilization_balancing = true
+
+    ## Number of partitions in the cluster (only valid when first
+    ## creating the cluster). Must be a power of 2, minimum 8 and maximum
+    ## 1024.
+    ## 
+    ## Default: 64
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## ring_size = 64
+
+    ## Number of concurrent node-to-node transfers allowed.
+    ## It is generally safe to raise this number to increase concurrency.  A
+    ## common value to use would be 8.  However, it is necessary to monitor for
+    ## handoff timeouts.  If handoff timeouts occur, reduce the
+    ## handoff_batch_threshold_count.  If timeouts continue to occur, even with a
+    ## low value for the handoff_batch_threshold_count (e.g. 200), then raise the
+    ## handoff_timeout.  Further, if using the leveled backend in Riak KV
+    ## investigate raising the the backend_pause.
+    ## 
+    ## Default: 2
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## transfer_limit = 2
+
+    ## Handoff batch threshold count
+    ## The maximum number of objects allowed in a single handoff batch.  If there
+    ## are issues with handoff timeouts, then the first change should be to reduce
+    ## this count - making the system more responsive to back-pressure.
+    ## 
+    ## Default: 500
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## handoff_batch_threshold_count = 500
+
+    ## Handoff timeout (milliseconds)
+    ## The timeout to wait for acknowledgement of the previous handoff batch
+    ## 
+    ## Default: 120000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## handoff_timeout = 120000
+
+    ## Default cert location for https can be overridden
+    ## with the ssl config variable, for example:
+    ## 
+    ## Acceptable values:
+    ##   - the path to a file
+    ## ssl.certfile = $(platform_etc_dir)/cert.pem
+
+    ## Default key location for https can be overridden with the ssl
+    ## config variable, for example:
+    ## 
+    ## Acceptable values:
+    ##   - the path to a file
+    ## ssl.keyfile = $(platform_etc_dir)/key.pem
+
+    ## Default signing authority location for https can be overridden
+    ## with the ssl config variable, for example:
+    ## 
+    ## Acceptable values:
+    ##   - the path to a file
+    ## ssl.cacertfile = $(platform_etc_dir)/cacertfile.pem
+
+    ## DTrace support Do not enable 'dtrace' unless your Erlang/OTP
+    ## runtime is compiled to support DTrace.  DTrace is available in
+    ## R15B01 (supported by the Erlang/OTP official source package) and in
+    ## R14B04 via a custom source repository & branch.
+    ## 
+    ## Default: off
+    ## 
+    ## Acceptable values:
+    ##   - on or off
+    dtrace = off
+
+    ## Platform-specific installation paths (substituted by rebar)
+    ## 
+    ## Default: ./bin
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    platform_bin_dir = ./bin
+
+    ## 
+    ## Default: ./data
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    platform_data_dir = ./data
+
+    ## 
+    ## Default: ./etc
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    platform_etc_dir = ./etc
+
+    ## 
+    ## Default: ./lib
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    platform_lib_dir = ./lib
+
+    ## 
+    ## Default: ./log
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    platform_log_dir = ./log
+
+    ## Enable consensus subsystem. Set to 'on' to enable the
+    ## consensus subsystem used for strongly consistent Riak operations.
+    ## 
+    ## Default: off
+    ## 
+    ## Acceptable values:
+    ##   - on or off
+    strong_consistency = on
+
+    ## Choose claim function
+    ## Claim function to be used when handling joins to the cluster.
+    ## There are three supported functions:
+    ## - choose_claim_v2 (the default) designed for environments without location
+    ## awareness as a requirement
+    ## - choose_claim_v3 (deprecated) a claim function which treats claim as an
+    ## optimisation problem. It creates a number of possible claim plans and
+    ## evaluates them for violations, balance and diversity, choosing the 'best'
+    ## plan.  claim_v3 is not location aware
+    ## - choose_claim_v4 a claim algorithm which refactors v2 to improve location
+    ## awareness
+    ## 
+    ## Acceptable values:
+    ##   - one of: choose_claim_v2, choose_claim_v3, choose_claim_v4
+    ## choose_claim_fun = choose_claim_v2
+
+    ## Target N Val for Cluster Administration
+    ## Cluster change operations such as joins and leaves will use a target_n_val
+    ## to control spacing of preflists across physical nodes.  The default value
+    ## is 4, which is the default bucket propery for n_val + 1.  This means that
+    ## the target for a cluster change operation is to make sure that all preflists
+    ## of n_val 3 are on 3 deperate physical devices, even when a single failure
+    ## has occurred.
+    ## If the target_n_val is not met by a cluster chnage operation, the failure is
+    ## not blocking -  a warning will be printed in the cluster plan, but the plan
+    ## will not be prevented from being committed.
+    ## In some cases, by reducing the target_n_val it may be possible to reduce the
+    ## number of transfers necessary to complete a cluster change operation.
+    ## In clusters with a large number of nodes, larger target_n_val values can be
+    ## supported, and may result to a better spread of load across the cluster
+    ## when node failure occurs.
+    ## 
+    ## Default: 4
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## target_n_val = 4
+
+    ## Target Location N Val for Cluster Administration
+    ## Cluster change operations such as joins and leaves will use a
+    ## target_location_n_val to control spacing of preflists across locations. This
+    ## is to support clusters which have a concept of `location` failure as well as
+    ## Node failure (e.g. rack awareness is required, or support for AWS placement
+    ## groups).
+    ## In this case, nodes are assigned to locations, and as well as supporting
+    ## the splitting of data replicas across nodes, attempts will also be made
+    ## during cluster chnage operations to split preflists across locations.
+    ## If the target_location_n_val is not met by a cluster chnage operation, the failure is
+    ## not blocking -  a warning will be printed in the cluster plan, but the plan
+    ## will not be prevented from being committed.
+    ## In some cases, by reducing the target_location_n_val it may be possible to
+    ## reduce the number of transfers necessary to complete a cluster change
+    ## operation.
+    ## In clusters with a large number of nodes, larger target_location_n_val
+    ## values can be supported.
+    ## If the target_location_nval is greater than the target_nval, the target_nval
+    ## will be used.
+    ## 
+    ## Default: 3
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## target_location_n_val = 3
+
+    ## On cluster leave - force full rebalance partitions
+    ## By default on a cluster leave there will first be an attempt to handoff
+    ## vnodes to safe (in terms of target_n_val) locations.  In small clusters,
+    ## there may be insufficient safe locations, and a temporary state can be
+    ## created where a single node has a large number of vnodes.
+    ## To mitigate this, a full rebalance (a re-assignment that does not optimise
+    ## based on the starting position), can be forced by setting this option on
+    ## all nodes.
+    ## Please carefully consider any cluster plan created with this option before
+    ## committing
+    ## If cluster planning with locations enabled, then `full_rebalance_onleave`
+    ## should also be enabled.  With claim_v4 this should result in a cluster
+    ## plan which is correct, but also relatively efficient.
+    ## 
+    ## Default: off
+    ## 
+    ## Acceptable values:
+    ##   - on or off
+    full_rebalance_onleave = off
+
+    ## listener.http.<name> is an IP address and TCP port that the Riak
+    ## HTTP interface will bind.
+    ## 
+    ## Default: 127.0.0.1:8098
+    ## 
+    ## Acceptable values:
+    ##   - an IP/port pair, e.g. 127.0.0.1:10011
+    listener.http.internal = 0.0.0.0:8098
+
+    ## listener.protobuf.<name> is an IP address and TCP port that the Riak
+    ## Protocol Buffers interface will bind.
+    ## 
+    ## Default: 127.0.0.1:8087
+    ## 
+    ## Acceptable values:
+    ##   - an IP/port pair, e.g. 127.0.0.1:10011
+    listener.protobuf.internal = 0.0.0.0:8087
+
+    ## The maximum length to which the queue of pending connections
+    ## may grow. If set, it must be an integer > 0. If you anticipate a
+    ## huge number of connections being initialized *simultaneously*, set
+    ## this number higher.
+    ## 
+    ## Default: 128
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## protobuf.backlog = 128
+
+    ## listener.https.<name> is an IP address and TCP port that the Riak
+    ## HTTPS interface will bind.
+    ## 
+    ## Acceptable values:
+    ##   - an IP/port pair, e.g. 127.0.0.1:10011
+    ## listener.https.internal = 127.0.0.1:8098
+
+    ## How Riak will repair out-of-sync keys. Some features require
+    ## this to be set to 'active', including search.
+    ## * active: out-of-sync keys will be repaired in the background
+    ## * passive: out-of-sync keys are only repaired on read
+    ## * active-debug: like active, but outputs verbose debugging
+    ## information
+    ## 
+    ## Default: active
+    ## 
+    ## Acceptable values:
+    ##   - one of: active, passive, active-debug
+    anti_entropy = active
+
+    ## 
+    ## Default: passive
+    ## 
+    ## Acceptable values:
+    ##   - one of: active, passive
+    tictacaae_active = passive
+
+    ## Use hashtree tokens for anti-entropy throttling
+    ## To hold-up the vnode when there is a backlog of activity on the AAE store
+    ## hashtree token bucket may be used to block the vnode every 90 puts until
+    ## the PUT has been completed.  This use aae_ping with tictac_aae, and a full
+    ## sync block with legacy anti-entropy
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## aae_tokenbucket = enabled
+
+    ## A path under which aae data files will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/tictac_aae
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    tictacaae_dataroot = $(platform_data_dir)/tictac_aae
+
+    ## A path under which the eraser overload queue will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/kv_eraser
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    eraser_dataroot = $(platform_data_dir)/kv_eraser
+
+    ## A path under which the reaper overload queue will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/kv_reaper
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    reaper_dataroot = $(platform_data_dir)/kv_reaper
+
+    ## A path under which the reader overload queue will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/kv_reader
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    reader_dataroot = $(platform_data_dir)/kv_reader
+
+    ## A path under which the repl real-time overload queue will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/kv_replrtqsrc
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    replrtq_dataroot = $(platform_data_dir)/kv_replrtqsrc
+
+    ## The maximum size of the overflow queue for the eraser.  If the queue
+    ## goes beyond this point, new additions will be discarded.
+    ## To update this at run-time, the configuration item can be changed via
+    ## remote_console, then `riak_kv_eraser:clear_queue()` can be called to clear
+    ## the existing queue and start a new queue with the new limit.
+    ## 
+    ## Default: 10000000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    eraser_overflow_limit = 10000000
+
+    ## The maximum size of the overflow queue for the reaper.  If the queue
+    ## goes beyond this point, new additions will be discarded.
+    ## To update this at run-time, the configuration item can be changed via
+    ## remote_console, then `riak_kv_reaper:clear_queue()` can be called to clear
+    ## the existing queue and start a new queue with the new limit.
+    ## 
+    ## Default: 10000000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    reaper_overflow_limit = 10000000
+
+    ## The maximum size of the overflow queue for the real-time replication
+    ## queue (nextgen repl only).  If the queue goes beyond this point, new
+    ## additions will be discarded.
+    ## For replrtq the queue is sized per QueueName (and priority), so differently
+    ## named queues on the host will each independently inherit this limit, for
+    ## each of the queue priorities.
+    ## To update this at run-time, the configuration item can be changed via
+    ## remote_console, then `riak_kv_replrtq_src:clear_rtq(QueueName)` can be
+    ## called to clear the existing queue and start a new queue with the new limit.
+    ## 
+    ## Default: 10000000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    replrtq_overflow_limit = 10000000
+
+    ## Parallel key store type
+    ## When running in parallel mode, which will be the default if the backend does
+    ## not support native tictac aae (i.e. is not leveled), what type of parallel
+    ## key store should be kept - leveled_ko (leveled and key-ordered), or
+    ## leveled_so (leveled and segment ordered).
+    ## When running in native mode, this setting is ignored
+    ## 
+    ## Default: leveled_ko
+    ## 
+    ## Acceptable values:
+    ##   - one of: leveled_ko, leveled_so
+    ## tictacaae_parallelstore = leveled_ko
+
+    ## Minimum Rebuild Wait
+    ## The minimum number of hours to wait between rebuilds.  Default value is 2
+    ## weeks
+    ## 
+    ## Default: 336
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    tictacaae_rebuildwait = 336
+
+    ## Maximum Rebuild Delay
+    ## The number of seconds which represents the length of the period in which the
+    ## next rebuild will be scheduled.  So if all vnodes are scheduled to rebuild
+    ## at the same time, they will actually rebuild randomly between 0 an this
+    ## value (in seconds) after the rebuild time. Default value is 4 days
+    ## 
+    ## Default: 345600
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    tictacaae_rebuilddelay = 345600
+
+    ## Store heads in parallel key stores
+    ## If running a parallel key store, the whole "head" object may be stored to
+    ## allow for fold_heads queries to be run against the parallel store.
+    ## Alternatively, the cost of the parallel key store can be reduced by storing
+    ## only a minimal data set necessary for AAE and monitoring
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## tictacaae_storeheads = disabled
+
+    ## Max number of leaf IDs per exchange
+    ## To control the length of time for each exchange, only a subset of the
+    ## conflicting leaves will be compared on each exchange.  If there are issues
+    ## with query timeouts this may be halved.  Large backlogs may be reduced
+    ## faster by doubling.  There are 1M segments in a standard tree overall.
+    ## Performance tuning can also be made by adjusting the `tictacaae_repairloops`
+    ## and `tictacaae_rangeboost` - but `tictacaae_maxresults` is the simplest
+    ## factor that is likely to result in a relatively predictable (and linear)
+    ## outcome in terms of both CPU cost and repair speed.
+    ## 
+    ## Default: 64
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    tictacaae_maxresults = 64
+
+    ## Pool Strategy - should a single node_worker_pool or multiple pools be
+    ## used for queueing potentially longer-running "background" queries
+    ## 
+    ## Default: dscp
+    ## 
+    ## Acceptable values:
+    ##   - one of: none, single, dscp
+    ## worker_pool_strategy = dscp
+
+    ## Pool Sizes - sizes for individual node_worker_pools
+    ## Only relevant if single or dscp strategy chosen.  Set
+    ## `node_worker_pool_size` if a `single` pool strategy is being used, or set
+    ## `af_worker_pool_size` and `be_worker_pool_size` if a multiple pool strategy
+    ## has been chosen.
+    ## Separate assured forwarding pools will be used of `af_worker_pool_size` for
+    ## informational aae_folds (find_keys, object_stats) and functional folds
+    ## (merge_tree_range, fetch_clock_range).  The be_pool is used only for tictac
+    ## AAE rebuilds at present
+    ## 
+    ## Default: 4
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    node_worker_pool_size = 4
+
+    ## 
+    ## Default: 2
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    af1_worker_pool_size = 2
+
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    af2_worker_pool_size = 1
+
+    ## 
+    ## Default: 4
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    af3_worker_pool_size = 4
+
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    af4_worker_pool_size = 1
+
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    be_worker_pool_size = 1
+
+    ## Backend PUT Pause (ms).
+    ## If the backend PUT has resulted in a pause request, then how long should
+    ## the vnode pause for?  This is measured in ms, and currently only applies
+    ## to the leveled backend
+    ## 
+    ## Default: 10
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## backend_pause_ms = 10
+
+    ## Tombstone Pause (ms)
+    ## The pause has a dual-purpose.  It slows both the riak_kv_reaper and
+    ## riak_kv_eraser process, as the pause is imposed on each delete or reap.
+    ## The pause also reduces the probability of a failure to reap when a non-keep
+    ## delete_mode is used, allowing for more time for the tombstone to propogate.
+    ## The pause is in milliseconds.
+    ## 
+    ## Default: 2
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## tombstone_pause = 2
+
+    ## Whether to allow node to participate in coverage queries.
+    ## This is used as a manual switch to stop nodes in incomplete states
+    ## (E.g. doing a full partition repair, or node replace) from participating
+    ## in coverage queries, as their information may be incomplete (e.g. 2i
+    ## issues seen in these circumstances).
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## participate_in_coverage = enabled
+
+    ## Specifies the storage engine used for Riak's key-value data
+    ## and secondary indexes (if supported).
+    ## 
+    ## Default: bitcask
+    ## 
+    ## Acceptable values:
+    ##   - one of: bitcask, leveldb, leveled, memory, multi, prefix_multi
+    storage_backend = bitcask
+
+    ## Simplify prefix_multi configuration for Riak CS. Keep this
+    ## commented out unless Riak is configured for Riak CS.
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## cs_version = 20000
+
+    ## Controls which binary representation of a riak value is stored
+    ## on disk.
+    ## * 0: Original erlang:term_to_binary format. Higher space overhead.
+    ## * 1: New format for more compact storage of small values.
+    ## If using the leveled backend object_format 1 will always be used, when
+    ## persisting data into the backend - even if 0 has been configured here
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - the integer 1
+    ##   - the integer 0
+    object.format = 1
+
+    ## Reading or writing objects bigger than this size will write a
+    ## warning in the logs.
+    ## 
+    ## Default: 5MB
+    ## 
+    ## Acceptable values:
+    ##   - a byte size with units, e.g. 10GB
+    object.size.warning_threshold = 5MB
+
+    ## Writing an object bigger than this will send a failure to the
+    ## client.
+    ## 
+    ## Default: 50MB
+    ## 
+    ## Acceptable values:
+    ##   - a byte size with units, e.g. 10GB
+    object.size.maximum = 50MB
+
+    ## Writing an object with more than this number of siblings will
+    ## generate a warning in the logs.
+    ## 
+    ## Default: 25
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    object.siblings.warning_threshold = 25
+
+    ## Writing an object with more than this number of siblings will
+    ## send a failure to the client.
+    ## 
+    ## Default: 100
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    object.siblings.maximum = 100
+
+    ## Whether to allow list buckets.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.list_buckets = enabled
+
+    ## Whether to allow streaming list buckets.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.stream_list_buckets = enabled
+
+    ## Whether to allow list keys.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.list_keys = enabled
+
+    ## Whether to allow streaming list keys.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.stream_list_keys = enabled
+
+    ## Whether to allow secondary index queries.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.secondary_index = enabled
+
+    ## Whether to allow streaming secondary index queries.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.stream_secondary_index = enabled
+
+    ## Whether to allow term-based map-reduce.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.map_reduce = enabled
+
+    ## Whether to allow JavaScript map-reduce.
+    ## 
+    ## Default: enabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## cluster.job.riak_kv.map_reduce_js = enabled
+
+    ## For Tictac full-sync does all data need to be sync'd, or should a
+    ## specific bucket be sync'd (bucket), or a specific bucket type (type).
+    ## Note that in most cases sync of all data is lower overhead than sync of
+    ## a subset of data - as cached AAE trees will be used.
+    ## TODO: type is not yet implemented.
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - one of: all, bucket, type, disabled
+    ttaaefs_scope = disabled
+
+    ## For tictac full-sync what registered queue name on this cluster should
+    ## be use for passing references to data which needs to be replicated for AAE
+    ## full-sync.  This queue name must be defined as a
+    ## `riak_kv.replq<n>_queuename`, but need not be exlusive to full-sync (i.e. a
+    ## real-time replication queue may be used as well)
+    ## 
+    ## Default: q1_ttaaefs
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ttaaefs_queuename = q1_ttaaefs
+
+    ## Tictac full-sync repair is by default uni-directional - each full-sync
+    ## operation managed from a given cluster will only attempt to prompt repair
+    ## where that cluster is in advance (i.e the src of a more advanced value).
+    ## From Riak 3.0.10 it can be bi-directional, and by configuring the queuename
+    ## of the remote peer that this cluster is consuming from, repairs will be
+    ## prompted in both directions.
+    ## This change reduces the waste associated with discovery work that does not
+    ## lead to repair activity.  To revert back to pre-3.0.10 uni-directional
+    ## behaviour use the keyword disabled as the peer queuename.
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## ttaaefs_queuename_peer = q1_ttaaefs
+
+    ## Tictac cluster slice number.  Each cluster can be configued with a
+    ## slice number to space out full-sync events.  The numbers can be 1..4.  For
+    ## example when doing bi-directional replication give one cluster a slice
+    ## number of 1, and another a slice number of 3 (or alternatively use 2 and 4)
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_cluster_slice = 1
+
+    ## For tictac full-sync what is the maximum number of AAE segments to be
+    ## compared per exchange.  Reducing this will speed up clock compare queries,
+    ## but will increase the number of exchanges required to complete a repair.
+    ## If using range_check to speed-up repairs, this can be reduced as the
+    ## range_check maxresults will be boosted by the ttaaefs_rangeboost  When using
+    ## range_check a value of 64 is recommended, which may be reduced to 32 or 16
+    ## if the cluster has a very large volume of keys and/or limited capacity.
+    ## Only reduce below 16 in exceptional circumstances.
+    ## More capacity to process sync queries can be added by increaseing the af2
+    ## and af3 queue sizes - but this will be at the risk of there being a bigger
+    ## impact on KV performance when repairs are required.
+    ## 
+    ## Default: 32
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_maxresults = 32
+
+    ## For tictac full-sync what is the maximum number of AAE segments to be
+    ## compared per exchange.  When running a range_check query this will be the
+    ## ttaaefs_max results * ttaaefs_rangeboost.
+    ## When using range_check, a small maxresults can be used, in effect using
+    ## other *_check syncs as discovery queries (to find the range_check for the
+    ## range_check to do the heavy lifting)
+    ## 
+    ## Default: 16
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_rangeboost = 16
+
+    ## For Tictac bucket full-sync which bucket should be sync'd by this
+    ## node.  Only ascii string bucket definitions supported (which will be
+    ## converted using list_to_binary).
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## ttaaefs_bucketfilter_name = sample_bucketname
+
+    ## For Tictac bucket full-sync what is the bucket type of the bucket name.
+    ## Only ascii string type bucket definitions supported (these
+    ## definitions will be converted to binary using list_to_binary)
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## ttaaefs_bucketfilter_type = default
+
+    ## For Tictac all full-sync which NVAL should be sync'd by this node.
+    ## This is the `local` nval, as the data in the remote cluster may have an
+    ## alternative nval.
+    ## 
+    ## Default: 3
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_localnval = 3
+
+    ## For Tictac all full-sync which NVAL should be sync'd in the remote
+    ## cluster.
+    ## 
+    ## Default: 3
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_remotenval = 3
+
+    ## The network address of the peer node in the cluster with which this
+    ## node will connect to for full_sync purposes.  If this peer node is
+    ## unavailable, then this local node will not perform any full-sync actions,
+    ## so alternative peer addresses should eb configured in other nodes.  The
+    ## peer address may be a load-balanced IP to avoid this issue.
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## ttaaefs_peerip = 127.0.0.1
+
+    ## The port to be used when connecting to the remote peer cluster
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## ttaaefs_peerport = 8087
+
+    ## The protocol to be used when conecting to the peer in the remote
+    ## cluster.  Could be http or pb, with pb being relatively efficient.  Adding
+    ## TLS security is possible with the pb protocol by setting the following
+    ## configuration items:
+    ## - riak_kv, repl_cacert_filename
+    ## - riak_kv, repl_cert_filename
+    ## - riak_kv, repl_key_filename,
+    ## - riak_kv, repl_username
+    ## 
+    ## Default: pb
+    ## 
+    ## Acceptable values:
+    ##   - one of: http, pb
+    ttaaefs_peerprotocol = pb
+
+    ## How many times per 24hour period should all the data be checked to
+    ## confirm it is fully sync'd.  When running a full (i.e. nval) sync this will
+    ## check all the data under that nval between the clusters, and when the trees
+    ## are out of alignment, will check across all data where the nval matches the
+    ## specified nval.
+    ## On large clusters (in terms of key count), this may take a long time - so
+    ## allcheck should be scheduled infrequently, as other checks may be delayed by
+    ## consumption of queue resource by the allcheck.
+    ## The af3_queue size, and the ttaaefs_maxresults, both need to be tuned to
+    ## ensure that the allcheck can run wihtin the 30 minute timeout.
+    ## For per-bucket replication all is a reference to all of the data for that
+    ## bucket, and warnings about sizing are specially relevant.
+    ## 
+    ## Default: 0
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_allcheck = 0
+
+    ## How many times per 24hour period should no data be checked to
+    ## confirm it is fully sync'd.  Use nochecks to align the number of checks
+    ## done by each node - if each node has the same number of slots, they will
+    ## naurally space their checks within the period of the slot.
+    ## 
+    ## Default: 0
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_nocheck = 0
+
+    ## How many times per 24hour period should the last hours data be checked
+    ## to confirm it is fully sync'd.
+    ## For per-bucket replication, the tree comparison prompted by this will be
+    ## constrained by the time period, as well as the keys and clocks checked for
+    ## repair. For full, nval, replication - the tree comparison is across all
+    ## time, but the keys and clocks checked for repair are constrained by the time
+    ## period.
+    ## Once deltas are outside of the last hour, an hourcheck can do
+    ## nothing to resolve the data, but will still consume resource.
+    ## 
+    ## Default: 0
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_hourcheck = 0
+
+    ## How many times per 24hour period should the last 24-hours of data be
+    ## checked to confirm it is fully sync'd.
+    ## For per-bucket replication, the tree comparison prompted by this will be
+    ## constrained by the time period, as well as the keys and clocks checked for
+    ## repair. For full, nval, replication - the tree comparison is across all
+    ## time, but the keys and clocks checked for repair are constrained by the time
+    ## period.
+    ## Once deltas are outside of the last hour, a daycheck can do
+    ## nothing to resolve the data, but will still consume resource.
+    ## 
+    ## Default: 0
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_daycheck = 0
+
+    ## How many times per 24hour period should the a range_check be run.  The
+    ## range_check is intended to be a smart check, in that it will:
+    ## - use a last_modified range starting from the last successful check as its
+    ## range if the last check was successful (i.e. showed the clusters to be
+    ## in sync);
+    ## - use a range identified by the last check (a last modified range, and
+    ## perhaps also a specific Bucket) if a range to limit the issues has been
+    ## identified by a previous failure
+    ## - Not run at all if the clusters are out of sync and no range has been
+    ## discovered (this may be the case when running on a sink which is behind a
+    ## source cluster).
+    ## For full, nval, sync operations the range is only relevant to the search
+    ## for objects to repair - the tree comparison is always between all data for
+    ## that nval.
+    ## 
+    ## Default: 0
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_rangecheck = 0
+
+    ## How many times per 24hour period should the an autocheck be run.  The
+    ## autocheck is intended to be an adaptive check, in that it will:
+    ## - use a rangecheck if the previous check has identified a range, or;
+    ## - use a rangecheck if the previous check was a successful sync, using the
+    ## timestamp of the previous success as low modified date, or;
+    ## - use a nocheck if the previous check did not sync, but also did not lead
+    ## to any repairs (e.g. because the sink was ahead), or;
+    ## - use an allcheck if no range is identified, and the current time is inside
+    ## the all_check window, or;
+    ## - use a daycheck otherwise
+    ## For full, nval, sync operations the range is only relevant to the search
+    ## for objects to repair, the tree comparison is always between all data for
+    ## that nval.
+    ## 
+    ## Default: 24
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ttaaefs_autocheck = 24
+
+    ## Lets you specify when during the day autocheck may run allcheck
+    ## rather than the less expensive daycheck, when no range has been identified.
+    ## This restricts the fixing entropy between clusters of non recently-modified
+    ## data to this window (and hence ensures the cost of fixing this entropy does
+    ## not fall in prime hours).  Note this window applies to `ttaaefs_autocheck`,
+    ## which will adapt to the window - any `ttaaefs_allcheck` count that has been
+    ## configured will ignore the window:
+    ## * `always` (default) No restrictions
+    ## * `never` never convert an auto_check to an all_check
+    ## * `window` Hours during which merging is permitted, where
+    ## `ttaaefs_allcheck.window.start` and `ttaaefs_allcheck.window.end` are
+    ## integers between 0 and 23.
+    ## If all_check has a significant impact on performance of your cluster,
+    ## or your cluster has quiet periods in which little storage activity
+    ## occurs, you may want to change this setting from the default.
+    ## 
+    ## Default: always
+    ## 
+    ## Acceptable values:
+    ##   - one of: always, never, window
+    ttaaefs_allcheck.policy = always
+
+    ## If Tictac AAE full-sync discovers keys to be repaired, should each key
+    ## that is repaired be logged
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## ttaaefs_logrepairs = enabled
+
+    ## If Tictac AAE sees difference in trees (for nval-based full
+    ## comparisons) only, should it attempt to repair those trees as well as
+    ## repairing any deltas.  Enabling this setting will change the concurrency
+    ## of fetch_clock_nval queries run to find repairs.
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## aae_fetchclocks_repair = enabled
+
+    ## Enable this node to act as a real-time replication source
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## replrtq_enablesrc = enabled
+
+    ## For queue-based replication what should be the r value on fetches,
+    ## and the w value on pushes.  Default is to use `one` but `quorum` or `all`
+    ## can be used should there be issues with vnode stress that will otherwise
+    ## generate anti-entropy workloads (e.g. with mailbox overloads)
+    ## 
+    ## Default: one
+    ## 
+    ## Acceptable values:
+    ##   - one of: one, quorum, all
+    replrtq_vnodecheck = one
+
+    ## Limit the number of objects to be cached on the replication queue,
+    ## with objects queued when the priority queue is beyond this limit stored as
+    ## clocks only to be fetched on replication
+    ## 
+    ## Default: 1000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    replrtq_srcobjectlimit = 1000
+
+    ## Limit the size of an object which may be pushed to the replication
+    ## queue.  Objects larger than this will still be replicated, but by being
+    ## re-fetched.  The product of replrtq_objectsize and replrtq_srcobjectlimit
+    ## gives a theoretical maximum for the total memory consumed by the
+    ## riak_kv_rpelrtq (in terms of objects).  Default of this product is 200MB.
+    ## 
+    ## Default: 200KB
+    ## 
+    ## Acceptable values:
+    ##   - a byte size with units, e.g. 10GB
+    replrtq_srcobjectsize = 200KB
+
+    ## Queue definitions
+    ## Queues should be defined using a pipe '|' delimited string, of two
+    ## colon ':' delimited elements.  The first part of each queue definition is
+    ## the ascii name of the queue, the second part indicated the filter to be
+    ## applied which should be either:
+    ## - any (all real-time modifications to be replicated via this queue)
+    ## - block_rtq (no real-time modifications to be replicated)
+    ## - bucketname.<name_of_bucket>
+    ## - bucketprefix.<prefix_for_bucket>
+    ## - buckettype.<name_of_type>
+    ## The latter three options allow for specific buckets to be supported by the
+    ## queue, or only buckets with certain prefixes, or for just buckets of a given
+    ## type.
+    ## If a list of buckets or types need to be supported, then either multiple
+    ## queues need to be defined, or non-persistent extended definitions can be
+    ## made at runtime used the riak_kv_replrtq_src API.
+    ## Example configurtaion might be:
+    ## cluster_a:any|cluster_b:block_rtq|cluster_c:bucketprefix.user
+    ## 
+    ## Default: q1_ttaaefs:block_rtq
+    ## 
+    ## Acceptable values:
+    ##   - text
+    replrtq_srcqueue = q1_ttaaefs:block_rtq
+
+    ## Enable this node zlib compress objects over the wire
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## replrtq_compressonwire = enabled
+
+    ## Enable this node to act as a sink and consume from a src cluster
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## replrtq_enablesink = enabled
+
+    ## Queue name  to be used for peers (replrtq_sinkpeers) that are
+    ## defined without a queue name.  Each node is expected to have a single
+    ## queue from which it will consume (by name).  This queue may be consumed
+    ## from multiple peers - and those peers may sit on multiple clusters.
+    ## If more than one queue name is to be consumed from, real-time changes can
+    ## be made through `riak_kv_replrtq_snk:add_snkqueue/3`.  The peer list can
+    ## also be extended to add different queue names into definitions - however
+    ## it is strongly recommended to use a single sinkqueue name per node.
+    ## 
+    ## Default: q1_ttaaefs
+    ## 
+    ## Acceptable values:
+    ##   - text
+    replrtq_sinkqueue = q1_ttaaefs
+
+    ## A list of peers is required to inform the sink node how to reach the
+    ## src.  All src nodes will need to have entries consumed - so it is
+    ## recommended that each src node is referred to in multiple sink node
+    ## configurations.
+    ## The list of peers is tokenised as host:port:protocol
+    ## In exceptional circumstances this definition can be extended to
+    ## queuename:host:port:protocol - but restricting the definitions of queuename
+    ## to the single queue specified in replrtq_sinkqueue is strongly recommended.
+    ## 
+    ## Acceptable values:
+    ##   - text
+    ## replrtq_sinkpeers = 127.0.0.1:8087:pb
+
+    ## The number of workers to be used for each queue must be configured.
+    ## 
+    ## Default: 24
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    replrtq_sinkworkers = 24
+
+    ## The maximum number of workers to be for any given peer may be
+    ## configured - if not configured will default to the number of sinkworkers
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## replrtq_sinkpeerlimit = 24
+
+    ## Enable this node to perform peer discovery for real time replication
+    ## With peer discovery the configured peers will be used to discover more peers
+    ## within those clusters.  The peer discovery process will re-discover at a
+    ## random interval between 60s and `replrtq_prompt_max_seconds`.  Unexpected
+    ## events will result in the configured peers being used, and discovered peers
+    ## being ignored.  If disabled the peer discovery process will be initialised,
+    ## but will remain idle
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## replrtq_peer_discovery = enabled
+
+    ## The maximum number of seconds to wait before re-prompting peer
+    ## discovery.  Defaults to 15 minutes.  An immediate cluster-wide update can be
+    ## prompted via `remote_console` using `riak_client:replrtq_reset_all_peers/1`.
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    ## replrtq_prompt_max_seconds = 900
+
+    ## Enable the `recalc` compaction strategy within the leveled backend in
+    ## riak.  The default (when disabled) is `retain`, but this will leave
+    ## uncollected garbage within the, journal.
+    ## It is now recommended from Riak KV 2.9.2 to consider the `recalc` strategy.
+    ## This strategy has a side effect of slower startups, and slower recovery
+    ## from a wiped ledger - but it will not keep an overhead of garbage within
+    ## the Journal.
+    ## It should be possible to move from `retain` to `recalc` via configuration
+    ## change.  However, it is not possible to switch from `recalc` back to
+    ## `retain`.  This switch can only be made for new nodes receiving data
+    ## through riak transfers (not inheriting data on disk).
+    ## The default `retain` strategy retains a history of key changes in the
+    ## journal, whereas the `recalc` strategy discards that history, but will redo
+    ## a diff_index_specs calculation when reloading each object.
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## leveled_reload_recalc = enabled
+
+    ## Enable logging of query timings in the index_fsm
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    ## log_index_fsm = enabled
+
+    ## Set the vnode worker pool size
+    ## This is a pool of workers per-vnode, to be used for general queries, in
+    ## particular secondary index queries.  This now defaults to 5 workers, prior
+    ## to release 3.0.9 it was set to a default of 10.
+    ## The number of concurrent index queries that can be supported in the cluster
+    ## will be equal to n_val * worker_count.
+    ## The statistic worker_vnode_pool_worktime_mean tracks the average time
+    ## each worker is taking per query in microseconds, so the overall queries
+    ## per second supported will be:
+    ## (1000000 div worker_vnode_pool_worktime) * n_val * worker_count
+    ## It should normally be possible to support >> 100 queries per second with
+    ## just a single worker per vnode.
+    ## The statistic worker_vnode_pool_queuetime_mean will track the average time
+    ## a query is spending on a queue, should the vnode pool be exhausted.
+    ## If using tictac_aae this should be set to at least 2, as tree rebuilds use
+    ## this pool as well as queries.  Also consider that long-running legacy
+    ## queries (list keys and list buckets, not using aae_fold) also use
+    ## this pool.  All aae_fold type queries will use the alternative
+    ## node_worker_pool, unless none is used for the worker_pool_strategy, in which
+    ## case the vnode pool is also used for aae_folds.
+    ## 
+    ## Default: 5
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    worker_pool_size = 5
+
+    ## Choose to read repair to primary vnodes only
+    ## When fallback vnodes are elected, then read repair will by default repair
+    ## any missing data from the vnode - i.e. every GET while the fallback is in
+    ## play will lead to a PUT to add the rewuested object to the fallback vnode,
+    ## as the fallback by default starts empty.
+    ## If the expectation is that failed vnodes are replaced quickly, as would be
+    ## possible in a Cloud scenario, this may not be desirable.  Read repair to
+    ## fallbacks reduce throughput in failure scenarios, and then the hinted
+    ## handoffs following recovery are impaired by the historic data which is
+    ## already in the recovered node, and has to be handed off as well as the
+    ## fresh updates received since the failure.
+    ## When fallback vnodes are expected to be in place for a long period, the
+    ## default setting of read repairing fallbacks may be preferred, as it will
+    ## provide additional data resilience, and potentially improved performance
+    ## where the same objects are repeatedly fetched.
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    read_repair_primaryonly = disabled
+
+    ## When doing handoffs, forward delete requests so that if the delete_mode
+    ## is not keep, tombstones will still be reaped.
+    ## 
+    ## Default: disabled
+    ## 
+    ## Acceptable values:
+    ##   - enabled or disabled
+    handoff_deletes = disabled
+
+    ## A path under which bitcask data files will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/bitcask
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    bitcask.data_root = $(platform_data_dir)/bitcask
+
+    ## Configure how Bitcask writes data to disk.
+    ## erlang: Erlang's built-in file API
+    ## nif: Direct calls to the POSIX C API
+    ## The NIF mode provides higher throughput for certain
+    ## workloads, but has the potential to negatively impact
+    ## the Erlang VM, leading to higher worst-case latencies
+    ## and possible throughput collapse.
+    ## 
+    ## Default: erlang
+    ## 
+    ## Acceptable values:
+    ##   - one of: erlang, nif
+    bitcask.io_mode = erlang
+
+    ## This parameter defines the percentage of total server memory
+    ## to assign to LevelDB. LevelDB will dynamically adjust its internal
+    ## cache sizes to stay within this size.  The memory size can
+    ## alternately be assigned as a byte count via leveldb.maximum_memory
+    ## instead.
+    ## 
+    ## Default: 70
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveldb.maximum_memory.percent = 70
+
+    ## Enables or disables the compression of data on disk.
+    ## Enabling (default) saves disk space.  Disabling may reduce read
+    ## latency but increase overall disk activity.  Option can be
+    ## changed at any time, but will not impact data on disk until
+    ## next time a file requires compaction.
+    ## 
+    ## Default: on
+    ## 
+    ## Acceptable values:
+    ##   - on or off
+    leveldb.compression = on
+
+    ## Selection of compression algorithms.  snappy is
+    ## original compression supplied for leveldb.  lz4 is new
+    ## algorithm that compresses to similar volume but averages twice
+    ## as fast on writes and four times as fast on reads.
+    ## 
+    ## Acceptable values:
+    ##   - one of: snappy, lz4
+    leveldb.compression.algorithm = lz4
+
+    ## 
+    ## Default: on
+    ## 
+    ## Acceptable values:
+    ##   - on or off
+    ## multi_backend.name.leveldb.compression = on
+
+    ## 
+    ## Acceptable values:
+    ##   - one of: snappy, lz4
+    ## multi_backend.name.leveldb.compression.algorithm = lz4
+
+    ## A path under which leveled data files will be stored.
+    ## 
+    ## Default: $(platform_data_dir)/leveled
+    ## 
+    ## Acceptable values:
+    ##   - the path to a directory
+    leveled.data_root = $(platform_data_dir)/leveled
+
+    ## Strategy for flushing data to disk
+    ## Can be set to riak_sync, sync (if OTP > 16) or none.  Use none, and the OS
+    ## will flush when most efficient.  Use riak_sync or sync to flush after every
+    ## PUT (not recommended without some hardware support e.g. flash drives and/or
+    ## Flash-backed Write Caches)
+    ## 
+    ## Default: none
+    ## 
+    ## Acceptable values:
+    ##   - text
+    leveled.sync_strategy = none
+
+    ## Compression method
+    ## Can be lz4 or native (which will use the Erlang native zlib compression)
+    ## within term_to_binary
+    ## 
+    ## Default: native
+    ## 
+    ## Acceptable values:
+    ##   - text
+    leveled.compression_method = native
+
+    ## Compression point
+    ## The point at which compression is applied to the Journal (the Ledger is
+    ## always compressed).  Use on_receipt or on_compact.  on_compact is suitable
+    ## when values are unlikely to yield much benefit from compression
+    ## (compression is only attempted when compacting)
+    ## 
+    ## Default: on_receipt
+    ## 
+    ## Acceptable values:
+    ##   - text
+    leveled.compression_point = on_receipt
+
+    ## Log level
+    ## Can be debug, info, warn, error or critical
+    ## Set the minimum log level to be used within leveled.  Leveled will log many
+    ## lines to allow for stats to be etracted by those using log indexers such as
+    ## Splunk
+    ## 
+    ## Default: info
+    ## 
+    ## Acceptable values:
+    ##   - text
+    leveled.log_level = info
+
+    ## The approximate size (in bytes) when a Journal file should be rolled.
+    ## Normally keep this as around the size of o(100K) objects.  Default is 1GB.
+    ## Note that on startup an actual maximum size will be chosen which varies by
+    ## a random factor from this point - to avoid coordination of roll events
+    ## across vnodes.
+    ## 
+    ## Default: 1000000000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.journal_size = 1000000000
+
+    ## The approximate count of objects when a Journal file should be rolled.
+    ## This time measured in object count, a file will be rolled if either the
+    ## object count or the journal size limit is reached.  Default 200K.
+    ## Note that on startup an actual maximum size will be chosen which varies by
+    ## a random factor from this point - to avoid coordination of roll events
+    ## across vnodes.
+    ## 
+    ## Default: 200000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.journal_objectcount = 200000
+
+    ## The level of the ledger to be pre-loaded into the page cache
+    ## Depending on how much memory is available for the page cache, and how much
+    ## disk I/O activity can be tolerated at startup - then the level at which the
+    ## ledger is forced into the page cache can be controlled by configuration.
+    ## 
+    ## Default: 4
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.ledger_pagecachelevel = 4
+
+    ## The number of journal compactions per vnode per day
+    ## The higher the value, the more compaction runs, and the sooner space is
+    ## recovered.  But each run has a cost
+    ## 
+    ## Default: 24
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.compaction_runs_perday = 24
+
+    ## The number of times per day to score an individual file for compaction.
+    ## The default value will lead to each file, on average, being scored once
+    ## every 12 hours
+    ## 
+    ## Default: 2
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.compaction_scores_perday = 2
+
+    ## Compaction Low Hour
+    ## The hour of the day in which journal compaction can start.  Use Low hour
+    ## of 0 and High hour of 23 to have no compaction window (i.e. always compact
+    ## regardless of time of day)
+    ## 
+    ## Default: 0
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.compaction_low_hour = 0
+
+    ## Compaction Top Hour
+    ## The hour of the day, after which journal compaction should stop.
+    ## If low hour > top hour then, compaction will work overnight between low
+    ## hour and top hour (inclusive).  Timings rely on server's view of local time
+    ## 
+    ## Default: 23
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.compaction_top_hour = 23
+
+    ## Max Journal Files Per Compaction Run
+    ## In a single compaction run, what is the maximum number of consecutive files
+    ## which may be compacted.  If increasing this value, the average number of
+    ## files per run may decrease, unless adjustments are also made to the
+    ## maxrunlength and singlefile compactionpercentage settings.
+    ## 
+    ## Default: 4
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.max_run_length = 4
+
+    ## Statistic monitoring proportion
+    ## The proportion of requests to be convered by stats, an integer between
+    ## 0 and 100.  There is no flow control, so setting this too high could
+    ## possibly overflow the leveled_monitor mailbox.
+    ## 
+    ## Default: 10
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.stats_percentage = 10
+
+    ## Statistic log frequency (seconds)
+    ## The wait in seconds between logs from each leveled_monitor (there is one
+    ## monitor per vnode)
+    ## 
+    ## Default: 30
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    leveled.stats_logfrequency = 30
+
+    ## The approximate size (in bytes) when a Journal file should be rolled.
+    ## Normally keep this as around the size of o(100K) objects.  Default is 1GB.
+    ## Note that on startup an actual maximum size will be chosen which varies by
+    ## a random factor from this point - to avoid coordination of roll events
+    ## across vnodes.
+    ## 
+    ## Default: 1000000000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    multi_backend.name.leveled.journal_size = 1000000000
+
+    ## The approximate count of objects when a Journal file should be rolled.
+    ## This time measured in object count, a file will be rolled if either the
+    ## object count or the journal size limit is reached.  Default 200K.
+    ## Note that on startup an actual maximum size will be chosen which varies by
+    ## a random factor from this point - to avoid coordination of roll events
+    ## across vnodes.
+    ## 
+    ## Default: 200000
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    multi_backend.name.leveled.journal_objectcount = 200000
+
+    ## The level of the ledger to be pre-loaded into the page cache
+    ## Depending on how much memory is available for the page cache, and how much
+    ## disk I/O activity can be tolerated at startup - then the level at which the
+    ## ledger is forced into the page cache can be controlled by configuration.
+    ## 
+    ## Default: 4
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    multi_backend.name.leveled.ledger_pagecachelevel = 4
+
+    ## The number of times per day to score an individual file for compaction
+    ## The default value will lead to each file, on average, being scored once
+    ## every 12 hours
+    ## 
+    ## Default: 2
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    multi_backend.name.leveled.compaction_scores_perday = 2
+
+    ## Path (relative or absolute) to the working directory for the
+    ## replication process
+    ## 
+    ## Default: ./data/riak_repl
+    ## 
+    ## Acceptable values:
+    ##   - text
+    mdc.data_root = ./data/riak_repl
+
+    ## The cluster manager will listen for connections from remote
+    ## clusters on this ip and port. Every node runs one cluster manager,
+    ## but only the cluster manager running on the cluster_leader will
+    ## service requests. This can change as nodes enter and leave the
+    ## cluster. The value is a combination of an IP address (**not
+    ## hostname**) followed by a port number
+    ## 
+    ## Default: 127.0.0.1:9080
+    ## 
+    ## Acceptable values:
+    ##   - an IP/port pair, e.g. 127.0.0.1:10011
+    mdc.cluster_manager = 127.0.0.1:9080
+
+    ## The hard limit of fullsync workers that will be running on the
+    ## source side of a cluster across all nodes on that cluster for a
+    ## fullsync to a sink cluster. This means if one has configured
+    ## fullsync for two different clusters, both with a
+    ## max_fssource_cluster of 5, 10 fullsync workers can be in
+    ## progress. Only affects nodes on the source cluster on which this
+    ## parameter is defined via the configuration file or command line
+    ## 
+    ## Default: 5
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    mdc.max_fssource_cluster = 5
+
+    ## Limits the number of fullsync workers that will be running on
+    ## each individual node in a source cluster. This is a hard limit for
+    ## all fullsyncs enabled; additional fullsync configurations will not
+    ## increase the number of fullsync workers allowed to run on any node.
+    ## Only affects nodes on the source cluster on which this parameter is
+    ## defined via the configuration file or command line
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    mdc.max_fssource_node = 1
+
+    ## Limits the number of "soft_exist" that the fullsynce
+    ## coordinator will handle before failing a partition from
+    ## fullsync. The soft_retries is per-fullsync, not per-partition.
+    ## Only affects nodes on the source cluster on which this parameter is
+    ## defined via the configuration file
+    ## 
+    ## Default: 100
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    mdc.max_fssource_soft_retries = 100
+
+    ## Adds a retry wait time. To be used in conjunction with
+    ## soft_retries. When a partition fails to fullsync with a soft_exit,
+    ## it is added to a queue to be retried. The retry wait time is the
+    ## minimum amount of time to elapse before a fullsync is re-attempted
+    ## on that partition. An example of usage: If the remote partition's
+    ## AAE tree is being re-built it can take many minutes, even
+    ## hours. There is no point in rapidly re-trying the same partition
+    ## `max_fssource_soft_retries' times in rapid
+    ## succession. fssource_retry_wait * max_fssource_soft_retries is the
+    ## maximum amount of time that can pass before fullsync discards a
+    ## partition.
+    ## 
+    ## Default: 60s
+    ## 
+    ## Acceptable values:
+    ##   - a time duration with units, e.g. '10s' for 10 seconds
+    mdc.fssource_retry_wait = 60s
+
+    ## Limits the number of fullsync workers allowed to run on each
+    ## individual node in a sink cluster. This is a hard limit for all
+    ## fullsync sources interacting with the sink cluster. Thus, multiple
+    ## simultaneous source connections to the sink cluster will have to
+    ## share the sink node's number of maximum connections. Only affects
+    ## nodes on the sink cluster on which this parameter is defined via
+    ## the configuration file or command line.
+    ## 
+    ## Default: 1
+    ## 
+    ## Acceptable values:
+    ##   - an integer
+    mdc.max_fssink_node = 1
+
+    ## Whether to initiate a fullsync on initial connection from the
+    ## secondary cluster
+    ## 
+    ## Default: true
+    ## 
+    ## Acceptable values:
+    ##   - one of: true, false
+    mdc.fullsync_on_connect = true
+
+    ## a single integer value representing the duration to wait in
+    ## minutes between fullsyncs, or a list of {clustername,
+    ## time_in_minutes} pairs for each sink participating in fullsync
+    ## replication.
+    ## 
+    ## Acceptable values:
+    ##   - a time duration with units, e.g. '10s' for 10 seconds
+    ## mdc.fullsync_interval.all = 30m
+
+    ## The maximum size the realtime replication queue can grow to
+    ## before new objects are dropped. Defaults to 100MB. Dropped objects
+    ## will need to be replication with a fullsync.
+    ## 
+    ## Default: 100MB
+    ## 
+    ## Acceptable values:
+    ##   - a byte size with units, e.g. 10GB
+    mdc.rtq_max_bytes = 100MB
+
+    ## Enable Riak CS proxy_get and block filter.
+    ## 
+    ## Default: off
+    ## 
+    ## Acceptable values:
+    ##   - one of: on, off
+    mdc.proxy_get = off
+
+    ## A heartbeat message is sent from the source to the sink every
+    ## heartbeat_interval. Setting heartbeat_interval to undefined
+    ## disables the realtime heartbeat. This feature is only available in
+    ## Riak Enterprise 1.3.2+.
+    ## 
+    ## Default: 15s
+    ## 
+    ## Acceptable values:
+    ##   - a time duration with units, e.g. '10s' for 10 seconds
+    mdc.realtime.heartbeat_interval = 15s
+
+    ## If a heartbeat response is not received in
+    ## rt_heartbeat_timeout seconds, then the source connection exits and
+    ## will be re-established.  This feature is only available in Riak
+    ## Enterprise 1.3.2+.
+    ## 
+    ## Default: 15s
+    ## 
+    ## Acceptable values:
+    ##   - a time duration with units, e.g. '10s' for 10 seconds
+    mdc.realtime.heartbeat_timeout = 15s
+
+    ## How frequently the stats for fullsync source processes should be
+    ## gathered. Requests for fullsync status always returned the most recently
+    ## gathered data, and thus can be at most as old as this value.
+    ## 
+    ## Acceptable values:
+    ##   - a time duration with units, e.g. '10s' for 10 seconds
+    ## mdc.fullsync.stat_refresh_interval = 1m
+
+    include conf.d/*.conf
+
