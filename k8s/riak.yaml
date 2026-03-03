@@ -86,8 +86,7 @@ spec:
       terminationGracePeriodSeconds: 120
       containers:
         - name: riak
-          #image: ghcr.io/gosub2k/riak-docker:main
-          image: localhost:30500/bangriak
+          image: ghcr.io/gosub2k/riak-docker:latest
           env:
             - name: RIAK_CONF_INITIAL_DATA
               valueFrom:
