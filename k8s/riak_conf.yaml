@@ -238,7 +238,7 @@ data:
     ## 
     ## Acceptable values:
     ##   - an integer
-    erlang.max_ports = 262144
+    erlang.max_ports = 65536
 
     ## Riak changes the VM default wakeup interval in order to reduce the
     ## risk of scheduler collapse, prior to the availability of Dirty NIFs in
@@ -1480,7 +1480,7 @@ data:
     ## 
     ## Acceptable values:
     ##   - an integer
-    leveldb.maximum_memory.percent = 70
+    leveldb.maximum_memory.percent = 50
 
     ## Enables or disables the compression of data on disk.
     ## Enabling (default) saves disk space.  Disabling may reduce read

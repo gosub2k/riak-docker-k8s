@@ -48,6 +48,15 @@ join_cluster() {
     echo POD_NAME not set, assume this is not K8S and no cluster
     return 0
   fi
+
+  # Check if already a member of the cluster (valid/joining state)
+  local current_status
+  current_status=$(riak-admin member-status 2>/dev/null | grep "riak@${RIAK_ID}" | awk '{print $2}') || true
+  if [ -n "$current_status" ] && [ "$current_status" != "leaving" ]; then
+    echo "Already a member of the cluster (status: $current_status), skipping join"
+    return 0
+  fi
+
   local base_host=${POD_NAME%%-*}  # extract stateful set name
   # Should really just join node 0 but if down maybe ok to join other nodes.
   for i in "0"; do
