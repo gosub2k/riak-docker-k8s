@@ -39,7 +39,10 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/riak-docker
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/riak
           tags: |
             type=raw,value=latest,enable={{is_default_branch}}
             type=ref,event=branch
